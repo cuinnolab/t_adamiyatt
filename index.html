@@ -485,32 +485,20 @@
       filter: sepia(20%);
     }
 
-    .play-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      background: var(--ink);
-      color: var(--cream);
-      font-family: var(--font-mono);
-      font-size: clamp(12px, 1.5vw, 13px);
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      text-decoration: none;
-      padding: 14px 24px;
+    .mps-iframe-wrap {
+      width: 100%;
+      border: 1px solid var(--rule-lt);
       border-radius: 2px;
-      transition: background 0.2s, color 0.2s;
-      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .mps-iframe {
+      width: 100%;
+      height: 140px;
       border: none;
-      min-height: 48px;
-    }
-
-    .play-btn:hover {
-      background: var(--gold);
-      color: var(--cream);
-    }
-
-    .play-btn svg {
-      flex-shrink: 0;
+      display: block;
+      background: #000;
+      color-scheme: light;
     }
 
     .audio-note {
@@ -849,12 +837,12 @@
 
 
   <p class="interviews-intro">
-    Below are the recordings of interviews over 15 tapes. Click the downward-facing caret
-    (to the right of the <em>Harvard Catalog</em> box for each tape) to reveal the play button,
-    then click <em>Play Tape</em> to open Harvard Library's audio player in a new tab. You can also
-    browse the full catalog entry by clicking <em>Harvard Catalog</em>. Note that most tapes have
-    sides 1 and 2 (two-sided cassette tapes), and each Side 2 will autoload as soon as Side 1
-    has completed.
+    Below are the recordings of interviews over 15 tapes. Click on the downward-facing caret
+    (to the right of the <em>Harvard Catalog</em> box for each tape) to listen to the interview
+    on this page — allow a few seconds for the player to load. You can also listen to the tapes
+    directly on the Harvard Catalog site by clicking <em>Harvard Catalog</em> (a new browser tab
+    will open). Note that most tapes have sides 1 and 2 (two-sided cassette tapes), and each
+    Side 2 will autoload as soon as Side 1 has completed.
   </p>
 
   <div class="interviews-grid" id="interviews-grid">
@@ -1106,33 +1094,35 @@ TAPES.forEach(tape => {
   const panel = document.createElement("div");
   panel.className = "audio-panel";
 
-  /* Play button — opens Harvard's audio player in a new tab */
-  const playBtn = document.createElement("a");
-  playBtn.className = "play-btn";
-  playBtn.href = nrsURL;
-  playBtn.target = "_blank";
-  playBtn.rel = "noopener";
-  playBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-    <circle cx="9" cy="9" r="8.5" stroke="currentColor" stroke-opacity="0.4"/>
-    <path d="M7 5.5L13 9L7 12.5V5.5Z" fill="currentColor"/>
-  </svg>
-  Play Tape ${tape.n} on Harvard Library`;
+  /* Harvard MPS iframe player */
+  const iframe = document.createElement("iframe");
+  iframe.className = "mps-iframe";
+  iframe.title = `Tape ${tape.n} audio player`;
+  iframe.setAttribute("allow", "autoplay; encrypted-media");
+  iframe.setAttribute("allowfullscreen", "");
 
   const caption = document.createElement("div");
   caption.className = "audio-note";
-  caption.style.marginTop = "8px";
-  caption.innerHTML = `Opens Harvard Library audio player in a new tab &nbsp;·&nbsp;
+  caption.style.marginTop = "6px";
+  caption.innerHTML = `Audio courtesy Harvard Library &nbsp;·&nbsp;
+    <a href="${nrsURL}" target="_blank" rel="noopener"
+       style="color:var(--gold);text-decoration:none;">Open in full player ↗</a>
+    &nbsp;·&nbsp;
     <a href="${catURL}" target="_blank" rel="noopener"
-       style="color:var(--gold);text-decoration:none;">CURIOSity catalog ↗</a>`;
+       style="color:var(--gold);text-decoration:none;">CURIOSity ↗</a>`;
 
-  panel.append(playBtn, caption);
+  const iframeWrap = document.createElement("div");
+  iframeWrap.className = "mps-iframe-wrap";
+  iframeWrap.append(iframe);
+  panel.append(iframeWrap, caption);
   wrapper.append(row, panel);
   grid.append(wrapper);
 
   let resolved = false;
 
   function resolve() {
-    /* Panel is already built with the play button — nothing to load */
+    if (resolved) return;
+    iframe.src = `https://nrs.harvard.edu/${tape.nrs}?buttons=y`;
     resolved = true;
   }
 
