@@ -240,7 +240,7 @@
       font-size: clamp(11px, 1.6vw, 13px);
       letter-spacing: 0.3em;
       text-transform: uppercase;
-      font-weight: 500;
+      font-weight: 700;
       color: var(--ink);
       flex-shrink: 0;
     }
@@ -1078,6 +1078,7 @@ TAPES.forEach(tape => {
   const extLink = document.createElement("a");
   extLink.href = catURL; extLink.target = "_blank"; extLink.rel = "noopener";
   extLink.className = "ext-link"; extLink.textContent = "Harvard Catalog ↗";
+  extLink.addEventListener("click", e => e.stopPropagation());
 
   const btn = document.createElement("button");
   btn.className = "expand-btn";
@@ -1105,10 +1106,10 @@ TAPES.forEach(tape => {
   caption.className = "audio-note";
   caption.style.marginTop = "6px";
   caption.innerHTML = `Audio courtesy Harvard Library &nbsp;·&nbsp;
-    <a href="${nrsURL}" target="_blank" rel="noopener"
+    <a href="${nrsURL}" target="_blank" rel="noopener" onclick="event.stopPropagation()"
        style="color:var(--gold);text-decoration:none;">Open in full player ↗</a>
     &nbsp;·&nbsp;
-    <a href="${catURL}" target="_blank" rel="noopener"
+    <a href="${catURL}" target="_blank" rel="noopener" onclick="event.stopPropagation()"
        style="color:var(--gold);text-decoration:none;">CURIOSity ↗</a>`;
 
   const iframeWrap = document.createElement("div");
@@ -1122,7 +1123,7 @@ TAPES.forEach(tape => {
 
   function resolve() {
     if (resolved) return;
-    iframe.src = `https://nrs.harvard.edu/${tape.nrs}?buttons=y`;
+    iframe.src = `https://nrs.harvard.edu/${tape.nrs}`;
     resolved = true;
   }
 
