@@ -449,7 +449,7 @@
 
     .interview-date {
       font-family: var(--font-mono);
-      font-size: var(--fs-xs);
+      font-size: clamp(15px, 1.5vw, 17px);
       letter-spacing: 0.12em;
       color: var(--ink-faint);
     }
@@ -462,11 +462,10 @@
 
     /* Audio player area — shown when row is expanded */
     .audio-panel {
-      grid-column: 1 / -1;
       display: none;
       flex-direction: column;
       gap: 12px;
-      padding: clamp(12px, 2vw, 16px) 0 8px clamp(50px, 7vw, 76px);
+      padding: clamp(12px, 2vw, 16px) clamp(20px, 4vw, 40px) 12px clamp(50px, 7vw, 76px);
     }
 
     .audio-panel.open { display: flex; }
@@ -950,21 +949,21 @@
 const BASE = "https://curiosity.lib.harvard.edu/iranian-oral-history-project/catalog/";
 
 const TAPES = [
-  { n:  1, d: "February 14, 1984", nrs: "URN-3:FHCL.HOUGH:102546954" },
-  { n:  2, d: "February 14, 1984", nrs: "URN-3:FHCL.HOUGH:102547007" },
-  { n:  3, d: "February 15, 1984", nrs: "URN-3:FHCL.HOUGH:102547006" },
-  { n:  4, d: "February 15, 1984", nrs: "URN-3:FHCL.HOUGH:102547027" },
-  { n:  5, d: "February 15, 1984", nrs: "URN-3:FHCL.HOUGH:105937803" },
-  { n:  6, d: "February 15, 1984", nrs: "URN-3:FHCL.HOUGH:105937811" },
-  { n:  7, d: "February 16, 1984", nrs: "URN-3:FHCL.HOUGH:105937870" },
-  { n:  8, d: "February 16, 1984", nrs: "URN-3:FHCL.HOUGH:105937885" },
-  { n:  9, d: "February 16, 1984", nrs: "URN-3:FHCL.HOUGH:105937928" },
-  { n: 10, d: "February 16, 1984", nrs: "URN-3:FHCL.HOUGH:105937985" },
-  { n: 11, d: "February 17, 1984", nrs: "URN-3:FHCL.HOUGH:105938020" },
-  { n: 12, d: "February 17, 1984", nrs: "URN-3:FHCL.HOUGH:105938037" },
-  { n: 13, d: "February 17, 1984", nrs: "URN-3:FHCL.HOUGH:105938068" },
-  { n: 14, d: "February 17, 1984", nrs: "URN-3:FHCL.HOUGH:105938112" },
-  { n: 15, d: "February 17, 1984", nrs: "URN-3:FHCL.HOUGH:105938102" },
+  { n:  1, d: "Tuesday February 14, 1984", nrs: "URN-3:FHCL.HOUGH:102546954" },
+  { n:  2, d: "Tuesday February 14, 1984", nrs: "URN-3:FHCL.HOUGH:102547007" },
+  { n:  3, d: "Wednesday February 15, 1984", nrs: "URN-3:FHCL.HOUGH:102547006" },
+  { n:  4, d: "Wednesday February 15, 1984", nrs: "URN-3:FHCL.HOUGH:102547027" },
+  { n:  5, d: "Wednesday February 15, 1984", nrs: "URN-3:FHCL.HOUGH:105937803" },
+  { n:  6, d: "Wednesday February 15, 1984", nrs: "URN-3:FHCL.HOUGH:105937811" },
+  { n:  7, d: "Thursday February 16, 1984", nrs: "URN-3:FHCL.HOUGH:105937870" },
+  { n:  8, d: "Thursday February 16, 1984", nrs: "URN-3:FHCL.HOUGH:105937885" },
+  { n:  9, d: "Thursday February 16, 1984", nrs: "URN-3:FHCL.HOUGH:105937928" },
+  { n: 10, d: "Thursday February 16, 1984", nrs: "URN-3:FHCL.HOUGH:105937985" },
+  { n: 11, d: "Friday February 17, 1984", nrs: "URN-3:FHCL.HOUGH:105938020" },
+  { n: 12, d: "Friday February 17, 1984", nrs: "URN-3:FHCL.HOUGH:105938037" },
+  { n: 13, d: "Friday February 17, 1984", nrs: "URN-3:FHCL.HOUGH:105938068" },
+  { n: 14, d: "Friday February 17, 1984", nrs: "URN-3:FHCL.HOUGH:105938112" },
+  { n: 15, d: "Friday February 17, 1984", nrs: "URN-3:FHCL.HOUGH:105938102" },
 ];
 
 function slug(n) {
@@ -1068,7 +1067,7 @@ TAPES.forEach(tape => {
 
   const dEl = document.createElement("div");
   dEl.className = "interview-date";
-  dEl.textContent = `${tape.d}  ·  Bethesda, MD  ·  Zia Sedghi`;
+  dEl.textContent = `${tape.d}  ·  Bethesda, MD`;
 
   info.append(tEl, dEl);
 
