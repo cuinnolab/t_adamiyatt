@@ -485,20 +485,24 @@
       filter: sepia(20%);
     }
 
-    .mps-iframe-wrap {
-      width: 100%;
-      border: 1px solid var(--rule-lt);
+    .play-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--ink);
+      color: var(--cream);
+      font-family: var(--font-mono);
+      font-size: clamp(13px, 1.8vw, 15px);
+      letter-spacing: 0.15em;
+      text-decoration: none;
+      padding: 14px 28px;
       border-radius: 2px;
-      overflow: hidden;
+      min-height: 52px;
+      transition: background 0.2s;
+      -webkit-tap-highlight-color: transparent;
     }
-
-    .mps-iframe {
-      width: 100%;
-      height: 140px;
-      border: none;
-      display: block;
-      background: #000;
-      color-scheme: light;
+    .play-link:hover, .play-link:active {
+      background: var(--gold);
     }
 
     .audio-note {
@@ -837,12 +841,11 @@
 
 
   <p class="interviews-intro">
-    Below are the recordings of interviews over 15 tapes. Click on the downward-facing caret
-    (to the right of the <em>Harvard Catalog</em> box for each tape) to listen to the interview
-    on this page — allow a few seconds for the player to load. You can also listen to the tapes
-    directly on the Harvard Catalog site by clicking <em>Harvard Catalog</em> (a new browser tab
-    will open). Note that most tapes have sides 1 and 2 (two-sided cassette tapes), and each
-    Side 2 will autoload as soon as Side 1 has completed.
+    Below are the recordings of interviews over 15 tapes. Click the downward-facing caret
+    to the right of each tape, then click <em>Listen on Harvard Library</em> to open the audio
+    player in a new tab — Harvard's site does not allow embedding of the audio player, as such
+    interviews should be listened to on Harvard's own site. Note that most tapes have sides 1
+    and 2 (two-sided cassette tapes), and each Side 2 will autoload as soon as Side 1 has completed.
   </p>
 
   <div class="interviews-grid" id="interviews-grid">
@@ -1095,64 +1098,30 @@ TAPES.forEach(tape => {
   const panel = document.createElement("div");
   panel.className = "audio-panel";
 
-  /* Harvard MPS iframe player */
-  const iframe = document.createElement("iframe");
-  iframe.className = "mps-iframe";
-  iframe.title = `Tape ${tape.n} audio player`;
-  iframe.setAttribute("allow", "autoplay; encrypted-media");
-  iframe.setAttribute("allowfullscreen", "");
+  /* Simple, reliable play link — opens Harvard's audio player in new tab */
+  const playLink = document.createElement("a");
+  playLink.href = nrsURL;
+  playLink.target = "_blank";
+  playLink.rel = "noopener noreferrer";
+  playLink.className = "play-link";
+  playLink.textContent = "▶  Listen on Harvard Library";
+  playLink.addEventListener("click", e => e.stopPropagation());
 
   const caption = document.createElement("div");
   caption.className = "audio-note";
-  caption.style.marginTop = "6px";
-  caption.innerHTML = `Audio courtesy Harvard Library &nbsp;·&nbsp;
-    <a href="${nrsURL}" target="_blank" rel="noopener" onclick="event.stopPropagation()"
-       style="color:var(--gold);text-decoration:none;">Open in full player ↗</a>
-    &nbsp;·&nbsp;
-    <a href="${catURL}" target="_blank" rel="noopener" onclick="event.stopPropagation()"
-       style="color:var(--gold);text-decoration:none;">CURIOSity ↗</a>`;
+  caption.style.marginTop = "8px";
+  caption.innerHTML = `<a href="${catURL}" target="_blank" rel="noopener noreferrer"
+    onclick="event.stopPropagation()"
+    style="color:var(--gold);text-decoration:none;">Harvard Catalog entry ↗</a>`;
 
-  const iframeWrap = document.createElement("div");
-  iframeWrap.className = "mps-iframe-wrap";
-  iframeWrap.append(iframe);
-  panel.append(iframeWrap, caption);
+  panel.append(playLink, caption);
   wrapper.append(row, panel);
   grid.append(wrapper);
-
-  let resolved = false;
-
-  function resolve() {
-    if (resolved) return;
-
-    const directURL = `https://nrs.harvard.edu/${tape.nrs}`;
-    const proxyURL  = `https://corsproxy.io/?url=${encodeURIComponent(directURL)}`;
-
-    /* Try direct first — works locally and in browsers that allow it.
-       On load, check if Harvard blocked framing; if so, switch to proxy. */
-    iframe.src = directURL;
-
-    iframe.addEventListener("load", () => {
-      try {
-        /* If same-origin restriction blocked it, contentDocument is null or
-           contains an error — fall back to the CORS proxy */
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-        if (!doc || !doc.body || doc.body.innerHTML.trim() === "") {
-          iframe.src = proxyURL;
-        }
-      } catch(e) {
-        /* Cross-origin block confirmed — switch to proxy */
-        iframe.src = proxyURL;
-      }
-    }, { once: true });
-
-    resolved = true;
-  }
 
   function toggle() {
     const open = panel.classList.toggle("open");
     btn.classList.toggle("open", open);
     row.setAttribute("aria-expanded", String(open));
-    if (open) resolve();
   }
 
   row.addEventListener("click", toggle);
