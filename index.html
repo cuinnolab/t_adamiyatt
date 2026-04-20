@@ -1123,7 +1123,28 @@ TAPES.forEach(tape => {
 
   function resolve() {
     if (resolved) return;
-    iframe.src = `https://nrs.harvard.edu/${tape.nrs}`;
+
+    const directURL = `https://nrs.harvard.edu/${tape.nrs}`;
+    const proxyURL  = `https://corsproxy.io/?url=${encodeURIComponent(directURL)}`;
+
+    /* Try direct first — works locally and in browsers that allow it.
+       On load, check if Harvard blocked framing; if so, switch to proxy. */
+    iframe.src = directURL;
+
+    iframe.addEventListener("load", () => {
+      try {
+        /* If same-origin restriction blocked it, contentDocument is null or
+           contains an error — fall back to the CORS proxy */
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        if (!doc || !doc.body || doc.body.innerHTML.trim() === "") {
+          iframe.src = proxyURL;
+        }
+      } catch(e) {
+        /* Cross-origin block confirmed — switch to proxy */
+        iframe.src = proxyURL;
+      }
+    }, { once: true });
+
     resolved = true;
   }
 
